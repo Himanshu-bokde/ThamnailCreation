@@ -21,6 +21,12 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Create .env.production
+        run: |
+          echo "VITE_API_BASE_URL=${{ secrets.API_BASE_URL }}" >> .env.production
+          echo "VITE_API_TIMEOUT=15000" >> .env.production
+          echo "VITE_DEBUG=false" >> .env.production
+
       - name: Build Vite App
         run: npm run build
 
@@ -41,7 +47,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} "
             cd ${EC2_PATH}
             pm2 delete frontend || true
-            pm2 start 'npx serve -s dist -l 3000' --name frontend
+            pm2 start \"npx serve -s dist -l 3000\" --name frontend
             pm2 save
           "
 

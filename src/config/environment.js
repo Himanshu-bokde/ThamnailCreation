@@ -1,21 +1,7 @@
 const config = {
-  development: {
-    API_BASE_URL: 'http://localhost:3000/api',
-    API_TIMEOUT: 10000,
-    DEBUG: true,
-  },
-  staging: {
-    API_BASE_URL: 'https://staging-api.yourapp.com/api',
-    API_TIMEOUT: 15000,
-    DEBUG: false
-  },
-  production: {
-    API_BASE_URL: 'https://api.yourapp.com/api',
-    API_TIMEOUT: 15000,
-    DEBUG: false
-  },
+  API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  API_TIMEOUT: Number(import.meta.env.VITE_API_TIMEOUT),
+  DEBUG: import.meta.env.VITE_DEBUG === "true",
 };
 
-const environment = process.env.NODE_ENV || 'development';
-
-export default config[environment];
+export default config;

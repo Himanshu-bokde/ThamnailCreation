@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import './App.css'
+import config from './config/environment'
+
+console.log(config)
 
 function App() {
  
