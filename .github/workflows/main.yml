@@ -30,7 +30,7 @@ jobs:
       - name: Build Vite App
         run: npm run build
 
-      - name: Upload dist to EC2 (Super Fast)
+      - name: Upload dist to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
@@ -40,14 +40,17 @@ jobs:
           echo "$EC2_KEY" > private_key.pem
           chmod 600 private_key.pem
 
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} "mkdir -p ${EC2_PATH}/dist"
+          # Create frontend folder if not exists
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} "mkdir -p ${EC2_PATH}"
 
+          # Upload dist/* → /home/ubuntu/frontend/dist/
           rsync -avz -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" dist/ ${EC2_USER}@${EC2_HOST}:${EC2_PATH}/dist/
 
+          # Restart PM2 server
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} "
             cd ${EC2_PATH}
             pm2 delete frontend || true
-            pm2 start \"npx serve -s dist -l 3000\" --name frontend
+            pm2 start 'npx serve -s dist -l 3000' --name frontend
             pm2 save
           "
 
