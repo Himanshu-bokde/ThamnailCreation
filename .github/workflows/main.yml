@@ -3,55 +3,63 @@ name: Deploy Vite React Frontend to EC2
 on:
   push:
     branches:
-      - master
+      - master  # or main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1 — Checkout code
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # Step 2 — Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
+      # Step 3 — Install dependencies
       - name: Install Dependencies
         run: npm ci
 
+      # Step 4 — Create .env.production for Vite
       - name: Create .env.production
         run: |
           echo "VITE_API_BASE_URL=${{ secrets.API_BASE_URL }}" >> .env.production
           echo "VITE_API_TIMEOUT=15000" >> .env.production
           echo "VITE_DEBUG=false" >> .env.production
 
+      # Step 5 — Build Vite project
       - name: Build Vite App
         run: npm run build
 
-      - name: Upload dist to EC2
+      # Step 6 — Deploy to EC2
+      - name: Deploy to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_KEY: ${{ secrets.EC2_KEY }}
           EC2_PATH: ${{ secrets.EC2_PATH }}
         run: |
+          # Create SSH private key
           echo "$EC2_KEY" > private_key.pem
           chmod 600 private_key.pem
 
-          # Create frontend folder if not exists
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} "mkdir -p ${EC2_PATH}"
+          # Create frontend folder on EC2
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST "mkdir -p $EC2_PATH"
 
-          # Upload dist/* → /home/ubuntu/frontend/dist/
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" dist/ ${EC2_USER}@${EC2_HOST}:${EC2_PATH}/dist/
+          # Upload the build folder
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no -i private_key.pem" dist/ $EC2_USER@$EC2_HOST:$EC2_PATH/dist/
 
-          # Restart PM2 server
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${EC2_USER}@${EC2_HOST} "
-            cd ${EC2_PATH}
+          # Start or restart frontend using PM2
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST "
+            cd $EC2_PATH
             pm2 delete frontend || true
             pm2 start 'npx serve -s dist -l 3000' --name frontend
             pm2 save
           "
 
+          # Clean up private key
           rm -f private_key.pem
