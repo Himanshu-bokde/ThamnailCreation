@@ -1,42 +1,80 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* Center the form */
+.upload-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f2f4f7;
+  padding: 20px;
+}
+
+.upload-form {
+  background: #fff;
+  padding: 30px;
+  width: 380px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.upload-form h2 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* File input */
+.file-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f1f1f1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 2px dashed #bbb;
+  transition: 0.3s;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.file-label:hover {
+  border-color: #6c63ff;
 }
 
-.card {
-  padding: 2em;
+.file-input {
+  display: none;
 }
 
-.read-the-docs {
-  color: #888;
+.file-btn {
+  background: #6c63ff;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.file-name {
+  color: #555;
+  font-size: 14px;
+  flex-grow: 1;
+  text-align: left;
+}
+
+/* Submit button */
+.submit-btn {
+  margin-top: 20px;
+  width: 100%;
+  background: #6c63ff;
+  color: #fff;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.submit-btn:hover {
+  background: #5848d6;
 }
