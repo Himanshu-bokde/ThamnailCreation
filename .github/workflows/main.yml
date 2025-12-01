@@ -27,9 +27,22 @@ jobs:
       # Step 4 — Create .env.production for Vite
       - name: Create .env.production
         run: |
-          echo "VITE_API_BASE_URL=${{ secrets.API_BASE_URL }}" >> .env.production
-          echo "VITE_API_TIMEOUT=15000" >> .env.production
-          echo "VITE_DEBUG=false" >> .env.production
+         rm -f .env.production
+
+         # Frontend Vite Variables
+         echo "VITE_API_BASE_URL=${{ secrets.API_BASE_URL }}" >> .env.production
+         echo "VITE_API_TIMEOUT=15000" >> .env.production
+         echo "VITE_DEBUG=false" >> .env.production
+
+         # AWS Credentials & Bucket Info
+         echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env.production
+         echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env.production
+         echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env.production
+         echo "AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}" >> .env.production
+         echo "AWS_THAMNAILBUCKET_NAME=${{ secrets.AWS_THAMNAILBUCKET_NAME }}" >> .env.production
+
+         # Optional: Production environment flag
+         echo "NODE_ENV=production" >> .env.production
 
       # Step 5 — Build Vite project
       - name: Build Vite App
